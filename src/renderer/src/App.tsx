@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "./redux/store/hooks";
+import { decrement, increment } from "./redux/features/counter/counterSlice";
 
 function App(): React.JSX.Element {
+  const { value: count } = useAppSelector((state) => state.counter);
+  const dispatch = useAppDispatch();
+
   const [filter, setFilter] = useState<string>("");
 
   interface itemsList {
@@ -28,9 +33,14 @@ function App(): React.JSX.Element {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
+      <div id="test-redux">
+        <p>Count test redux: {count}</p>
+        <button onClick={() => dispatch(increment(2))}>Teste Redux Add</button>
+        <button onClick={() => dispatch(decrement(2))}>Teste Redux Delete</button>
+      </div>
       <div>
         <label htmlFor="search">
-          <input type="text" placeholder="Filtrar" value={filter} onChange={handleFilterInput}/>
+          <input type="text" placeholder="Filtrar" value={filter} onChange={handleFilterInput} />
           <select id="search">
             <option value="environment">Runtime Environment</option>
             <option value="version">Version</option>
