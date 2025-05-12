@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "./redux/store/hooks";
-import { decrement, increment } from "./redux/features/counter/counterSlice";
+// import { useAppDispatch, useAppSelector } from "./redux/store/hooks";
+// import { decrement, increment } from "./redux/features/counter/counterSlice";
+import ModalItemManager from "./components/modals/ModalItemManager";
 
 function App(): React.JSX.Element {
-  const { value: count } = useAppSelector((state) => state.counter);
-  const dispatch = useAppDispatch();
+  // const { value: count } = useAppSelector((state) => state.counter);
+  // const dispatch = useAppDispatch();
 
   const [filter, setFilter] = useState<string>("");
+  const [isItemManagerOpen, setIsItemManagerOpen] = useState<boolean>(false);
 
   interface itemsList {
     id: string;
@@ -33,12 +35,16 @@ function App(): React.JSX.Element {
 
   return (
     <div className="min-h-screen flex justify-center items-center">
-      <div id="test-redux">
+      {/* <div id="test-redux">
         <p>Count test redux: {count}</p>
         <button onClick={() => dispatch(increment(2))}>Teste Redux Add</button>
         <button onClick={() => dispatch(decrement(2))}>Teste Redux Delete</button>
-      </div>
-      <div>
+      </div> */}
+      {/* <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+        <svg className="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" /></svg>
+        <span>Download</span>
+      </button> */}
+      <div className="">
         <label htmlFor="search">
           <input type="text" placeholder="Filtrar" value={filter} onChange={handleFilterInput} />
           <select id="search">
@@ -48,7 +54,8 @@ function App(): React.JSX.Element {
             <option value="command">Command</option>
           </select>
         </label>
-        <button>Add options</button>
+        <button onClick={() => setIsItemManagerOpen(prev => !prev)}>Add options</button>
+        <ModalItemManager isItemManagerOpen={isItemManagerOpen} setIsItemManagerOpen={setIsItemManagerOpen} />
         <table>
           <thead>
             <tr>
