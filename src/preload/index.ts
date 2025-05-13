@@ -1,5 +1,6 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { itemsList } from 'renderer/src/types/itemList'
 
 // Custom APIs for renderer
 const api = {}
@@ -11,6 +12,10 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('electronAPI', {
+      getDados: () => ipcRenderer.invoke('get-dados'),
+      saveDados: (novosDados: itemsList[]) => ipcRenderer.invoke('save-dados', novosDados),
+    });
   } catch (error) {
     console.error(error)
   }
@@ -19,4 +24,9 @@ if (process.contextIsolated) {
   window.electron = electronAPI
   // @ts-ignore (define in dts)
   window.api = api
+  // @ts-ignore (define em dts)
+  window.electronAPI = {
+    getDados: () => ipcRenderer.invoke('get-dados'),
+    saveDados: (novosDados: itemsList[]) => ipcRenderer.invoke('save-dados', novosDados),
+  };
 }

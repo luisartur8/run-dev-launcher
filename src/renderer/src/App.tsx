@@ -2,21 +2,15 @@ import { useEffect, useState } from "react";
 // import { useAppDispatch, useAppSelector } from "./redux/store/hooks";
 // import { decrement, increment } from "./redux/features/counter/counterSlice";
 import ModalItemManager from "./components/modals/ModalItemManager";
+import { itemsList } from "./types/itemList";
 
 function App(): React.JSX.Element {
   // const { value: count } = useAppSelector((state) => state.counter);
   // const dispatch = useAppDispatch();
 
+  const [data, setData] = useState<itemsList[]>([]);
   const [filter, setFilter] = useState<string>("");
   const [isItemManagerOpen, setIsItemManagerOpen] = useState<boolean>(false);
-
-  interface itemsList {
-    id: string;
-    environment: string;
-    version: string;
-    path: string;
-    command: string;
-  }
 
   const items: itemsList[] = [
     { id: crypto.randomUUID(), environment: "NodeJS", version: "14.19.3", path: "C://user/dev", command: "npm run dev" },
@@ -33,8 +27,25 @@ function App(): React.JSX.Element {
     setFilter(e.target.value)
   }
 
+  const abrirArquivo = async () => {
+    try {
+      const resultado = await window.electronAPI.getDados();
+      if (!resultado.cancelado) {
+        console.log('Conteúdo do arquivo:', resultado.conteudo);
+        if (resultado.conteudo) {
+          const dados: itemsList[] = JSON.parse(resultado.conteudo);
+          setData(dados);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao abrir arquivo:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex justify-center items-center">
+      <button onClick={abrirArquivo}>Abrir Arquivo</button>
+      {data.map(item => <div key={item.id}>{item.environment}</div>)}
       {/* <div id="test-redux">
         <p>Count test redux: {count}</p>
         <button onClick={() => dispatch(increment(2))}>Teste Redux Add</button>

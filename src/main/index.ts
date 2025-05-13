@@ -1,7 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { readFile, writeFile } from 'fs/promises';
+import { itemsList } from '../renderer/src/types/itemList';
 
 function createWindow(): void {
   // Create the browser window.
@@ -12,6 +14,8 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: false,
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
@@ -74,3 +78,25 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const dadosPath = path.resolve(__dirname, "../dados.json");
+
+ipcMain.handle('get-dados', async (): Promise<itemsList[]> => {
+  try {
+    const data = await readFile(dadosPath, 'utf-8');
+    return JSON.parse(data) as itemsList[];
+  } catch (err) {
+    console.error('Erro ao ler ou converter arquivo JSON: ', err)
+    throw err;
+  }
+})
+
+ipcMain.handle('save-dados', async (_event, newData: itemsList[]): Promise<void> => {
+  try {
+    const json = JSON.stringify(newData, null, 2);
+    await writeFile(dadosPath, json, 'utf-8');
+  } catch (err) {
+    console.error('Erro ao salvar o arquivo JSON:', err);
+    throw err;
+  }
+});
