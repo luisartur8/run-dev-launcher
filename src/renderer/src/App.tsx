@@ -29,22 +29,25 @@ function App(): React.JSX.Element {
 
   const abrirArquivo = async () => {
     try {
-      const resultado = await window.electronAPI.getDados();
-      if (!resultado.cancelado) {
-        console.log('Conteúdo do arquivo:', resultado.conteudo);
-        if (resultado.conteudo) {
-          const dados: itemsList[] = JSON.parse(resultado.conteudo);
-          setData(dados);
-        }
-      }
+      const resultado = await window.bridge.getDados();
+      setData(resultado)
     } catch (error) {
       console.error('Erro ao abrir arquivo:', error);
     }
   };
 
+  const armazenarArquivo = async () => {
+    try {
+      await window.bridge.saveDados(data);
+    } catch(err) {
+      throw err
+    }
+  }
+
   return (
     <div className="min-h-screen flex justify-center items-center">
       <button onClick={abrirArquivo}>Abrir Arquivo</button>
+      <button onClick={armazenarArquivo}>Armazenar Arquivo</button>
       {data.map(item => <div key={item.id}>{item.environment}</div>)}
       {/* <div id="test-redux">
         <p>Count test redux: {count}</p>

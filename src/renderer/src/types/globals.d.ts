@@ -1,5 +1,4 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-import { itemsList } from '@renderer/types/itemList';
+import type { itemsList } from './types/itemList';
 
 export interface IElectronAPI {
   getDados: () => Promise<itemsList[]>,
@@ -8,8 +7,10 @@ export interface IElectronAPI {
 
 declare global {
   interface Window {
-    bridge: IElectronAPI
+    electron: unknown;
+    bridge: IElectronAPI;
+    api: unknown;
   }
 }
 
-export { }
+export { };
